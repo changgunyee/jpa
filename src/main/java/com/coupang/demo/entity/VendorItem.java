@@ -2,17 +2,17 @@ package com.coupang.demo.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class VendorItem {
     @Id
     @GeneratedValue
@@ -21,6 +21,6 @@ public class VendorItem {
     @ManyToOne
     private OutboundShipment outboundShipment;
 
-    @OneToMany
+    @OneToMany(mappedBy = "vendorItem")
     private List<Item> itemList;
 }

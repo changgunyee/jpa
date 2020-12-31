@@ -1,21 +1,20 @@
 package com.coupang.demo.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 public class OutboundShipment {
 
     @Id
@@ -24,6 +23,15 @@ public class OutboundShipment {
 
     private Long orderNumber;
 
-    @OneToMany
-    private List<VendorItem> vendorItemList;
+    @OneToMany(mappedBy = "outboundShipment")
+    private List<VendorItem> vendorItemList = new ArrayList<>();
+
+    public void addVendorItem(VendorItem vendorItem) {
+        if (vendorItemList == null) {
+            vendorItemList = new ArrayList<>();
+        }
+
+        vendorItemList.add(vendorItem);
+        vendorItem.setOutboundShipment(this);
+    }
 }

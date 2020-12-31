@@ -2,6 +2,8 @@ plugins {
     id 'org.springframework.boot' version '2.4.1'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
+    id 'idea'
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
 group = 'com.coupang'
@@ -9,6 +11,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
+    querydsl.extendsFrom compileClasspath
     compileOnly {
         extendsFrom annotationProcessor
     }
@@ -28,6 +31,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'com.querydsl:querydsl-apt:4.1.4'
+    implementation 'com.querydsl:querydsl-jpa:4.1.4'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -35,4 +40,34 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+ext {
+    querydslSrcDir = 'src/main/generated'
+    queryDslVersion = '4.1.4'
+}
+
+querydsl {
+    library = "com.querydsl:querydsl-apt"
+    querydslSourcesDir = 'src/main/generated'
+    jpa = true
+    querydslDefault = true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs += file(querydslSrcDir)
+        }
+    }
+}
+
+idea {
+    module {
+        generatedSourceDirs += file(querydslSrcDir)
+    }
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }
