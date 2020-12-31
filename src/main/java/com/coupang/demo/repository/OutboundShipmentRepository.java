@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface OutboundShipmentRepository extends JpaRepository<OutboundShipment, Long> {
+public interface OutboundShipmentRepository extends JpaRepository<OutboundShipment, Long>, OutboundShipmentRepositoryCustom {
 
 
     @Query(value = "select o from OutboundShipment o join fetch o.vendorItemList")
@@ -15,6 +15,7 @@ public interface OutboundShipmentRepository extends JpaRepository<OutboundShipme
 
     @Query(value = "select distinct o from OutboundShipment o join fetch o.vendorItemList")
     List<OutboundShipment> findByOrderNumberJoinFetchDistinct(Long orderNumber);
+
 
     @EntityGraph(attributePaths = {"vendorItemList"})
     List<OutboundShipment> findByOrderNumber(Long orderNumber);

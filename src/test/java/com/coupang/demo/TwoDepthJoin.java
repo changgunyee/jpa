@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class TwoDepthJoin {
 
-    public static final String THEN = "---------- THEN ----------";
+    public static final String THEN = "---------- THEN ----------\n";
     @Autowired
     OutboundShipmentRepository outboundShipmentRepository;
 
@@ -51,14 +51,25 @@ public class TwoDepthJoin {
 
             Item item1 = itemRepository.save(new Item());
             Item item2 = itemRepository.save(new Item());
-            VendorItem vendorItem1 = VendorItem.builder().itemList(Arrays.asList(item1, item2)).build();
-            VendorItem vendorItem2 = VendorItem.builder().build();
+            VendorItem vendorItem1 = vendorItemRepository.save(new VendorItem());
+            VendorItem vendorItem2 = vendorItemRepository.save(new VendorItem());
+            item1.setVendorItem(vendorItem1);
+            item2.setVendorItem(vendorItem1);
+            vendorItem1.setItemList(Arrays.asList(item1, item2));
+            itemRepository.save(item1);
+            itemRepository.save(item2);
+            vendorItemRepository.save(vendorItem1);
+
             outboundShipment.addVendorItem(vendorItem1);
             outboundShipment.addVendorItem(vendorItem2);
+            vendorItem1.setOutboundShipment(outboundShipment);
+            vendorItem2.setOutboundShipment(outboundShipment);
             vendorItemRepository.save(vendorItem1);
             vendorItemRepository.save(vendorItem2);
             outboundShipmentRepository.save(outboundShipment);
         }
+
+        System.out.printf(THEN);
     }
 
     private void clear() {
@@ -73,37 +84,10 @@ public class TwoDepthJoin {
     }
 
     @Test
-    @DisplayName("deleteAll은 N+1 발생 cascade반영 o")
-    void cascadeRemove() {
-        List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumber(1L);
-        outboundShipmentRepository.deleteAll(outboundShipments);
-    }
+    @DisplayName("two depth")
+    public void twoDepth() {
+        List<Item> items = itemRepository.findByOrderNumberTwoDepthJoinFetch(1L);
 
-    @Test
-    @DisplayName("join fetch는 distinct나 set을 써야함")
-    void joinFetch_noDistinct() {
-        List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumberJoinFetch(1L);
-
-        assertThat(outboundShipments).hasSize(3 * 2);
-    }
-
-    @Test
-    @DisplayName("join fetch는 distinct나 set을 써야함")
-    void joinFetch_distinct() {
-        List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumberJoinFetchDistinct(1L);
-
-        assertThat(outboundShipments).hasSize(3);
-    }
-
-    @Test
-    @DisplayName("entitygraph")
-    void entitygraph() {
-        outboundShipmentRepository.save(OutboundShipment.builder()
-            .orderNumber(1L)
-            .build());
-
-        System.out.println(THEN);
-        List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumber(1L);
-        assertThat(outboundShipments).hasSize(4);
+        assertThat(1).isEqualTo(1);
     }
 }

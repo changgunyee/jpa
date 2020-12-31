@@ -49,12 +49,16 @@ public class FetchJoinTest {
                 .build();
             outboundShipmentRepository.save(outboundShipment);
 
-            Item item1 = itemRepository.save(new Item());
-            Item item2 = itemRepository.save(new Item());
+            Item item1 = new Item();
+            Item item2 = new Item();
             VendorItem vendorItem1 = VendorItem.builder().itemList(Arrays.asList(item1, item2)).build();
             VendorItem vendorItem2 = VendorItem.builder().build();
             outboundShipment.addVendorItem(vendorItem1);
             outboundShipment.addVendorItem(vendorItem2);
+            item1.setVendorItem(vendorItem1);
+            item2.setVendorItem(vendorItem1);
+            itemRepository.save(item1);
+            itemRepository.save(item2);
             vendorItemRepository.save(vendorItem1);
             vendorItemRepository.save(vendorItem2);
             outboundShipmentRepository.save(outboundShipment);
@@ -74,14 +78,14 @@ public class FetchJoinTest {
 
     @Test
     @DisplayName("deleteAll은 N+1 발생 cascade반영 o")
-    void cascadeRemove() {
+    public void cascadeRemove() {
         List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumber(1L);
         outboundShipmentRepository.deleteAll(outboundShipments);
     }
 
     @Test
     @DisplayName("join fetch는 distinct나 set을 써야함")
-    void joinFetch_noDistinct() {
+    public void joinFetch_noDistinct() {
         List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumberJoinFetch(1L);
 
         assertThat(outboundShipments).hasSize(3 * 2);
@@ -89,7 +93,7 @@ public class FetchJoinTest {
 
     @Test
     @DisplayName("join fetch는 distinct나 set을 써야함")
-    void joinFetch_distinct() {
+    public void joinFetch_distinct() {
         List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumberJoinFetchDistinct(1L);
 
         assertThat(outboundShipments).hasSize(3);
@@ -97,7 +101,7 @@ public class FetchJoinTest {
 
     @Test
     @DisplayName("entitygraph")
-    void entitygraph() {
+    public void entitygraph() {
         outboundShipmentRepository.save(OutboundShipment.builder()
             .orderNumber(1L)
             .build());

@@ -55,7 +55,7 @@ public class CrudTest {
 
     @Test
     @DisplayName("하위 엔티티 save안하고 상위 엔티티에서 save하면 에러")
-    void saveBeforeSavingChild() {
+    public void saveBeforeSavingChild() {
         vendorItemRepository.save(VendorItem.builder()
             .itemList(Collections.singletonList(new Item()))
             .build());
@@ -63,7 +63,7 @@ public class CrudTest {
 
     @Test
     @DisplayName("상위 엔티티 save한다고 해서 하위 엔티티 자동으로 save되는 것은 아님")
-    void saveNotSavingChild() {
+    public void saveNotSavingChild() {
         VendorItem vendorItem = new VendorItem();
         OutboundShipment outboundShipment = new OutboundShipment();
         outboundShipment.addVendorItem(vendorItem);

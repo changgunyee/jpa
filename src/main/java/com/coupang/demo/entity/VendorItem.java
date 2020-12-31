@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 public class VendorItem {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
