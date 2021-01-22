@@ -1,11 +1,10 @@
 package com.coupang.demo;
 
-import com.coupang.demo.entity.Item;
 import com.coupang.demo.entity.OutboundShipment;
-import com.coupang.demo.entity.VendorItem;
 import com.coupang.demo.repository.ItemRepository;
 import com.coupang.demo.repository.OutboundShipmentRepository;
 import com.coupang.demo.repository.VendorItemRepository;
+import com.coupang.demo.service.OutboundShipmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,32 +35,17 @@ public class FetchJoinTest {
     ItemRepository itemRepository;
 
     @Autowired
+    OutboundShipmentService outboundShipmentService;
+
+    @Autowired
     EntityManagerFactory emf;
 
     @BeforeEach
     void setUp() {
         clear();
 
-        for (int i = 0; i < 3; i++) {
-            OutboundShipment outboundShipment = OutboundShipment.builder()
-                .orderNumber(1L)
-                .build();
-            outboundShipmentRepository.save(outboundShipment);
-
-            Item item1 = new Item();
-            Item item2 = new Item();
-            VendorItem vendorItem1 = VendorItem.builder().itemList(Arrays.asList(item1, item2)).build();
-            VendorItem vendorItem2 = VendorItem.builder().build();
-            outboundShipment.addVendorItem(vendorItem1);
-            outboundShipment.addVendorItem(vendorItem2);
-            item1.setVendorItem(vendorItem1);
-            item2.setVendorItem(vendorItem1);
-            itemRepository.save(item1);
-            itemRepository.save(item2);
-            vendorItemRepository.save(vendorItem1);
-            vendorItemRepository.save(vendorItem2);
-            outboundShipmentRepository.save(outboundShipment);
-        }
+        outboundShipmentService.save();
+        System.out.printf(THEN);
     }
 
     private void clear() {
@@ -79,6 +62,7 @@ public class FetchJoinTest {
     @Test
     @DisplayName("deleteAll은 N+1 발생 cascade반영 o")
     public void cascadeRemove() {
+
         List<OutboundShipment> outboundShipments = outboundShipmentRepository.findByOrderNumber(1L);
         outboundShipmentRepository.deleteAll(outboundShipments);
     }

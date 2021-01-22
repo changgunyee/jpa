@@ -20,8 +20,8 @@ public class OutboundShipment {
 
     private Long orderNumber;
 
-    @OneToMany(mappedBy = "outboundShipment")
-    private List<VendorItem> vendorItemList = new ArrayList<>();
+    @OneToMany(mappedBy = "outboundShipment", cascade = CascadeType.REMOVE)
+    private List<VendorItem> vendorItemList;
 
     public void addVendorItem(VendorItem vendorItem) {
         if (vendorItemList == null) {

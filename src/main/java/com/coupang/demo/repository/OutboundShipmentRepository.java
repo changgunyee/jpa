@@ -20,4 +20,7 @@ public interface OutboundShipmentRepository extends JpaRepository<OutboundShipme
     @EntityGraph(attributePaths = {"vendorItemList"})
     List<OutboundShipment> findByOrderNumber(Long orderNumber);
 
+    OutboundShipment findFirstByOrderNumber(Long orderNumber);
+
+    OutboundShipment findTopByOrderNumber(Long orderNumber);
 }
