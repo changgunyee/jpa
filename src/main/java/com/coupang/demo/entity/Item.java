@@ -10,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @ToString(exclude = "vendorItem")
 @Setter
+@Getter
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,4 +18,8 @@ public class Item {
 
     @ManyToOne
     private VendorItem vendorItem;
+
+    public void plusIdOne() {
+        this.id++;
+    }
 }
