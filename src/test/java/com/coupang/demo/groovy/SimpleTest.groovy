@@ -21,12 +21,13 @@ class SimpleTest extends Specification {
         item.plusIdOne()
     }
 
-    def "setupTest1"() {
+    def "given is actually nothing"() {
+        given:
         expect:
         assert item.id == 2
     }
 
-    def "setupTest2"() {
+    def "then must have when right before"() {
         expect:
         assert item.id == 3
     }
